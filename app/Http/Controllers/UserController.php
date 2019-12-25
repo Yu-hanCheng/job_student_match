@@ -60,24 +60,23 @@ class UserController extends Controller
         $out = new \Symfony\Component\Console\Output\ConsoleOutput();
 
         //com_students user_id order=0
-//        $pick_list=ComStudent::where(['order'=>0])->get()->groupBy('user_id');
-////        return response()->json(['result'=>$pick_list],200);
-//        $users=[];
-//        foreach ($pick_list as $student){
-//
-//            $companies=[];
-//            foreach ($student as $an_order){
-//                $companies[]=$an_order->company_id;
-//            }
-//            $stu_wishes = Order::where(['user_id'=>$student[0]->user_id])->whereIn('company_id',$companies)->orderBy('wishes', 'asc')->first();
-//            $users[]=$stu_wishes->user_id;
-//
-//            //DB transitaion
-//            $matched = matchpair::create([
-//                'user_id'=>$stu_wishes->user_id,
-//                'company_id'=>$stu_wishes->company_id
-//            ]);
-//        }
+        $pick_list=ComStudent::where(['order'=>0])->get()->groupBy('user_id');
+        $users=[];
+        foreach ($pick_list as $student){
+
+            $companies=[];
+            foreach ($student as $an_order){
+                $companies[]=$an_order->company_id;
+            }
+            $stu_wishes = Order::where(['user_id'=>$student[0]->user_id])->whereIn('company_id',$companies)->orderBy('wishes', 'asc')->first();
+            $users[]=$stu_wishes->user_id;
+
+            //DB transitaion
+            $matched = matchpair::create([
+                'user_id'=>$stu_wishes->user_id,
+                'company_id'=>$stu_wishes->company_id
+            ]);
+        }
         // 備取
 
         $sofar=matchpair::select('company_id', DB::raw('count(*) as total'))->groupBy('company_id')->get();
